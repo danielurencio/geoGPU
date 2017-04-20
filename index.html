@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>GeoData con GPU</title>
+    <script type="text/javascript" src="js/three.js"></script>
+    <script type="text/javascript" src="js/d3.min.js"></script>
+    <script type="text/javascript" src="js/topojson.js"></script>
+    <script type="text/javascript" src="js/queue.js"></script>
+
+    <style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+	    background-color:black;
+        }
+    </style>
+</head>
+<body>
+<!--
+<div
+style=
+"width:600px;
+height:200px;
+background-color:white;
+margin-top:20%;
+text-align:center;
+margin-left:25%;">
+<input type="number" value="1"></input>
+
+<button onclick="start()" style=
+"display:inline-block;
+color:white;
+background-color:black;
+border:none;
+padding: 15px 32px;
+margin-top:20%;
+font-family: Helvetica;
+font-size:20px;
+hover:gray;
+text-align:center;
+position:relative">Simular</button>
+</div>
+-->
+<!-- Javascript code that runs our Three.js examples -->
+<script type="text/javascript" src="js/code.js"> </script>
+<script type="text/javascript" src="js/attempt.js"> </script>
+<script charset="utf-8">
+
+var body = d3.select("body");
+
+var width = window.innerWidth, height = window.innerHeight;
+d3.select("body").append("canvas")
+  .attr({
+    "id":"canvas",
+    "width":width,
+    "height": height
+   })
+  .style({
+    "position":"fixed",
+    "width":width,
+    "height":height
+  });
+
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+var days;// = document.getElementsByTagName("input")[0].value;
+//console.log(days);
+
+function run() {
+  queue()
+    .defer(d3.json, "js/m_t.json")
+    .defer(d3.json, "js/numext.json")
+    .await(DO);
+
+  function DO(err, topology, points) {
+    if(err) console.log(err);
+    var city = new City(700,500,topology,points);
+    var points = city.getPoints(); //console.log(points);
+    var blocks = city.getBlocks();
+    init(blocks, points,days);
+  }
+}
+
+function start() {
+   days=document.getElementsByTagName("input")[0].value;
+
+   d3.select("div").remove();
+   run();
+}
+
+run()
+</script>
+</body>
+</html>
